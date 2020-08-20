@@ -1,31 +1,31 @@
 jobs:
-  - name: dataworks-repo-template-terraform-pr
+  - name: external-ci-users-pr
     plan:
-      - get: dataworks-repo-template-terraform-pr
+      - get: external-ci-users-pr
         trigger: true
         version: every
-      - put: dataworks-repo-template-terraform-pr
+      - put: external-ci-users-pr
         params:
-          path: dataworks-repo-template-terraform-pr
+          path: external-ci-users-pr
           status: pending
         input_mapping:
-          dataworks-repo-template-terraform: dataworks-repo-template-terraform-pr
+          external-ci-users: external-ci-users-pr
       - .: (( inject meta.plan.terraform-bootstrap ))
         input_mapping:
-          dataworks-repo-template-terraform: dataworks-repo-template-terraform-pr
+          external-ci-users: external-ci-users-pr
       - .: (( inject meta.plan.terraform-plan ))
         input_mapping:
-          dataworks-repo-template-terraform: dataworks-repo-template-terraform-pr
+          external-ci-users: external-ci-users-pr
         params:
           TF_WORKSPACE: 'qa'
           DETAILED_EXITCODE: ''
         on_failure:
-          put: dataworks-repo-template-terraform-pr
+          put: external-ci-users-pr
           params:
-            path: dataworks-repo-template-terraform-pr
+            path: external-ci-users-pr
             status: failure
         on_success:
-          put: dataworks-repo-template-terraform-pr
+          put: external-ci-users-pr
           params:
-            path: dataworks-repo-template-terraform-pr
+            path: external-ci-users-pr
             status: success

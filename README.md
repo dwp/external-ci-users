@@ -1,4 +1,4 @@
-# dataworks-repo-template-terraform
+# external-ci-users
 
 ## Description
 
