@@ -5,8 +5,8 @@ variable "costcode" {
 
 variable "assume_role" {
   type        = string
-  default     = "ci"
-  description = "IAM role assumed by Concourse when running Terraform"
+  default     = "gha_aws_concourse"
+  description = "IAM role assumed by GitHub Actions when running Terraform"
 }
 
 variable "region" {
