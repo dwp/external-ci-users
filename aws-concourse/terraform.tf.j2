@@ -22,7 +22,7 @@ provider "aws" {
 
 locals {
   name        = "external-ci-users"
-  environment = terraform.workspace == "default" ? "development" : terraform.workspace
+  environment = terraform.workspace == "default" ? "management-dev" : terraform.workspace
 
   account = {
     {%- for key, value in accounts.items() %}
