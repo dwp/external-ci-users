@@ -5,5 +5,7 @@
 **/*.tfstate
 **/*.tfstate*
 
+**/policy_document.json
+
 terraform.tf
 aviator_pipeline.yml

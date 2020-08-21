@@ -51,3 +51,10 @@ locals {
       } {%- endfor %}
   }
 }
+
+data "aws_secretsmanager_secret" "external_ci_users" {
+  name = "/concourse/dataworks/external-ci-users"
+}
+data "aws_secretsmanager_secret_version" "external_ci_users" {
+  secret_id = data.aws_secretsmanager_secret.external_ci_users.id
+}
