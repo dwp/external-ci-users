@@ -7,9 +7,14 @@ import os
 import sys
 import yaml
 import json
+import subprocess
 
 
 def main():
+    repos = [f.name for f in os.scandir('./users') if f.is_dir()]
+    # for repo in repos; iterrate list, bootstrap per repo.
+    repo = repos[0]
+
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
     if 'AWS_REGION' in os.environ:
@@ -36,11 +41,11 @@ def main():
         parameter['Parameter']['Value'], Loader=yaml.FullLoader)
     with open('terraform.tf.j2') as in_template:
         template = jinja2.Template(in_template.read())
-    with open('aws-concourse/terraform.tf', 'w+') as terraform_tf:
+    with open(f'users/{repo}/terraform.tf', 'w+') as terraform_tf:
         terraform_tf.write(template.render(config_data))
     with open('terraform.tfvars.j2') as in_template:
         template = jinja2.Template(in_template.read())
-    with open('aws-concourse/terraform.tfvars', 'w+') as terraform_tfvars:
+    with open(f'users/{repo}/terraform.tfvars', 'w+') as terraform_tfvars:
         terraform_tfvars.write(template.render(config_data))
     print("Terraform config successfully created")
 
@@ -58,8 +63,8 @@ def main():
         sys.exit(1)
 
     policy_data = json.loads(
-        response['SecretBinary'])["aws-concourse"]
-    with open('aws-concourse/policy_document.json', 'w+') as policy_document:
+        response['SecretBinary'])[f"{repo}"]
+    with open(f'users/{repo}/policy_document.json', 'w+') as policy_document:
         json.dump(policy_data, policy_document)
     print("Policy document successfully created")
 
