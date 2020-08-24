@@ -11,5 +11,9 @@ How this works, right now:
 
 `make bootstrap`  
 `cd aws-concourse/`  
-`./betty_bootstrap.sh`  
 `terraform init && terraform plan`
+
+## Plan
+This repo should hold users that are used to run (primarily) GitHub Actions against our AWS environments.  By design, each repository will have its own user and role to manage that repo alone.  These users, their roles, their secrets etc should all be automted in their creation, maintenance and removal.
+
+The service user that can run this repo, should remain in our `identity` repo. It should exist soley to create, maintain and remove these users.
