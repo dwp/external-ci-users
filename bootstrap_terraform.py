@@ -6,6 +6,7 @@ import jinja2
 import os
 import sys
 import yaml
+import json
 
 
 def main():
@@ -13,8 +14,11 @@ def main():
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
     if 'AWS_REGION' in os.environ:
         ssm = boto3.client('ssm', region_name=os.environ['AWS_REGION'])
+        secrets_manager = boto3.client(
+            'secretsmanager', region_name=os.environ['AWS_REGION'])
     else:
         ssm = boto3.client('ssm')
+        secrets_manager = boto3.client('secretsmanager')
 
     try:
         parameter = ssm.get_parameter(
@@ -39,6 +43,25 @@ def main():
     with open('aws-concourse/terraform.tfvars', 'w+') as terraform_tfvars:
         terraform_tfvars.write(template.render(config_data))
     print("Terraform config successfully created")
+
+    try:
+        response = secrets_manager.get_secret_value(
+            SecretId="/concourse/dataworks/external-ci-users")
+    except botocore.exceptions.ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        if "The security token included in the request is invalid" in error_message:
+            print(
+                "ERROR: Invalid security token used when calling AWS Secrets Manager. Have you run `aws-sts` recently?")
+        else:
+            print("ERROR: Problem calling AWS Secrets Manager: {}".format(
+                error_message))
+        sys.exit(1)
+
+    policy_data = json.loads(
+        response['SecretBinary'])["aws-concourse"]
+    with open('aws-concourse/policy_document.json', 'w+') as policy_document:
+        json.dump(policy_data, policy_document)
+    print("Policy document successfully created")
 
 
 if __name__ == "__main__":
