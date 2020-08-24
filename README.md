@@ -10,7 +10,7 @@ This works in principle, not in reality.  The policies are fake.
 How this works, right now:
 
 `make bootstrap`  
-`cd aws-concourse/`  
+`cd users/aws-concourse/`  
 `terraform init && terraform plan`
 
 ## Plan
